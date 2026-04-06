@@ -32,14 +32,23 @@ def generate_data():
         media_atraso_cliente = np.random.uniform(0, 15)
         
         cliente_novo = 1 if qtd_pagamentos_anteriores < 5 else 0
-        
-        pagou_em_dia = 1 if atraso == 0 else 0
-        
+
         regiao = random.choice(['norte', 'nordeste', 'sul', 'sudeste', 'centro oeste'])
         
         score_credito = np.random.randint(0, 1000)
         
         tipo_empresa = random.choice(['MEI', 'EI', 'SLU', 'LTDA', 'S/A', 'S/S'])
+
+        prob_pagamento = (
+            0.3
+            + (score_credito / 1000) * 0.4
+            + (1 - cliente_novo) * 0.2
+            - (media_atraso_cliente / 30) * 0.3
+        )
+
+        prob_pagamento = max(0, min(1, prob_pagamento))
+        
+        pagou_em_dia = np.random.choice([1, 0], p=[prob_pagamento, 1 - prob_pagamento])
         
         dados.append([
             cliente,
@@ -50,10 +59,11 @@ def generate_data():
             qtd_pagamentos_anteriores,
             media_atraso_cliente,
             cliente_novo,
-            pagou_em_dia,
             regiao,
             score_credito,
-            tipo_empresa
+            tipo_empresa,
+            prob_pagamento,
+            pagou_em_dia
         ])
         
     df = pd.DataFrame(dados, columns=[
@@ -65,10 +75,11 @@ def generate_data():
         'qtd_pagamentos_anteriores',
         'media_atraso_cliente',
         'cliente_novo',
-        'pagou_em_dia',
         'regiao',
         'score_credito',
-        'tipo_empresa'
+        'tipo_empresa',
+        'probabilidade_pagamento',
+        'pagou_em_dia'
     ])
 
     df.to_csv('data/raw/pagamentos.csv', index=False)

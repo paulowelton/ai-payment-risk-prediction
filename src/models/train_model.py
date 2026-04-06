@@ -10,7 +10,7 @@ def load_data(path: str) -> pd.DataFrame:
 def prepare_data(df: pd.DataFrame):
     df = df.copy()
     
-    df = df.drop(columns=['cliente_id', 'data_pagamento'], errors='ignore')
+    df = df.drop(columns=['cliente_id', 'data_pagamento', 'dias_atraso', 'media_atraso_real', 'taxa_pagamento_dia'], errors='ignore')
     
     X = df.drop('pagou_em_dia', axis=1)
     y = df['pagou_em_dia']
@@ -45,6 +45,7 @@ def main():
     
     evaluate_model(model, X_test, y_test)
     
+    joblib.dump(X.columns, 'models/columns.pkl')
     save_model(model, 'models/model.pkl')
     
     print('Modelo treinado e salvo com sucesso!')
