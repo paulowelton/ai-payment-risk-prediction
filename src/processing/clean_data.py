@@ -21,7 +21,6 @@ def enconde_categorical(df: pd.DataFrame) -> pd.DataFrame:
 
 def process_data(input_path: str, output_path: str):
     df = load_data(input_path)
-    print(df)
     df = clean_column_names(df)
     df = convert_types(df)
     df = handle_missing(df)
